@@ -8,8 +8,8 @@ namespace Orkan\WP\Base1;
 /*
  * Plugin Name: Ork Base1
  * Description: Ork Base1 example.
- * Version: 1.0.0
- * Date: Sat, 11 May 2024 16:19:36 +02:00
+ * Version: 1.0.1
+ * Date: Sat, 11 May 2024 16:48:16 +02:00
  * Author: Orkan <orkans+wpbase1@gmail.com>
  * Author URI: https://github.com/orkan
  */

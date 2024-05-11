@@ -1,5 +1,5 @@
-# Wordpress plugin: WP Base1 example `v1.0.0`
-Basic example demonstrating the use of `orkan/wp-base` package.
+# Wordpress plugin: WP Base1 example `v1.0.1`
+Basic example demonstrating the use of [orkan/wp-base](https://github.com/orkan/wp-base) package.
 
 ## Requirements:
 - PHP ^7
@@ -13,4 +13,4 @@ Basic example demonstrating the use of `orkan/wp-base` package.
 [Orkan](https://github.com/orkan)
 
 ## Updated
-Sat, 11 May 2024 16:19:36 +02:00
+Sat, 11 May 2024 16:48:16 +02:00
