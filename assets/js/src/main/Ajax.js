@@ -7,6 +7,8 @@ ork.Ajax = {
 	 * Ajax request
 	 */
 	async fetch( action, data = {}, opts = {} ) {
+		let json, status, url = ork.url;
+
 		data.action = action;
 		data[ork.nonce.name] = ork.nonce.action;
 
@@ -15,13 +17,18 @@ ork.Ajax = {
 			method: 'POST',
 			signal:  null,
 			spinner: '',
-			body: this.getFormData( data ),
 		}, ...opts };
 
-		let json, status;
+		if( opts.method == 'POST' ) {
+			opts.body = this.getFormData( data );
+		}
+		else if( opts.method == 'GET' ) {
+			url += '?' + this.getHttpQuery( data );
+		}
+
 		this.spinner( opts.spinner, true );
 
-		const Response = await fetch( ork.url, opts )
+		const Response = await fetch( url, opts )
 			.then( Response => {
 				status = `[${Response.status}] ${Response.statusText}`;
 				ork.Base.debug( Response );
@@ -44,6 +51,14 @@ ork.Ajax = {
 		}
 
 		return json.data;
+	},
+
+	/**
+	 * Build query string from object.
+	 */
+	getHttpQuery( obj ) {
+		const Query = new URLSearchParams( obj );
+		return Query.toString();
 	},
 
 	/**

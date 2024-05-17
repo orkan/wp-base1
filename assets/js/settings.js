@@ -1,6 +1,6 @@
 /*
- * This file is part of the orkan/wp-base package.
- * Copyright (c) 2024 Orkan <orkans+wpbase@gmail.com>
+ * This file is part of the orkan/wp-base1 package.
+ * Copyright (c) 2024 Orkan <orkans+wpbase1@gmail.com>
  */
 /* DO NOT EDIT - AUTO-GENERATED FROM: wp-content/plugins/ork-base1/assets/js/src/settings.js */
 window.ork = window.ork || {};
@@ -75,19 +75,6 @@ window.ork = window.ork || {};
 		},
 	
 		/**
-		 * Build query string from object.
-		 */
-		buildHttpQuery( obj ) {
-			const Query = new URLSearchParams();
-	
-			for( const [name, value] of Object.entries( obj ) ) {
-				Query.append( name, value );
-			}
-	
-			return Query.toString();
-		},
-	
-		/**
 		 * [Input] Show/hide spinner
 		 */
 		showSpinner( id, show = true ) {
@@ -111,6 +98,8 @@ window.ork = window.ork || {};
 		 * Ajax request
 		 */
 		async fetch( action, data = {}, opts = {} ) {
+			let json, status, url = ork.url;
+	
 			data.action = action;
 			data[ork.nonce.name] = ork.nonce.action;
 	
@@ -119,13 +108,18 @@ window.ork = window.ork || {};
 				method: 'POST',
 				signal:  null,
 				spinner: '',
-				body: this.getFormData( data ),
 			}, ...opts };
 	
-			let json, status;
+			if( opts.method == 'POST' ) {
+				opts.body = this.getFormData( data );
+			}
+			else if( opts.method == 'GET' ) {
+				url += '?' + this.getHttpQuery( data );
+			}
+	
 			this.spinner( opts.spinner, true );
 	
-			const Response = await fetch( ork.url, opts )
+			const Response = await fetch( url, opts )
 				.then( Response => {
 					status = `[${Response.status}] ${Response.statusText}`;
 					ork.Base.debug( Response );
@@ -151,6 +145,14 @@ window.ork = window.ork || {};
 		},
 	
 		/**
+		 * Build query string from object.
+		 */
+		getHttpQuery( obj ) {
+			const Query = new URLSearchParams( obj );
+			return Query.toString();
+		},
+	
+		/**
 		 * Convert Object to FormData instance.
 		 */
 		getFormData( obj ) {
@@ -172,13 +174,5 @@ window.ork = window.ork || {};
 		},
 	};
 
-
-	/*
-	 * ---------------------------------------------------------------------------------------------------------
-	 * onLoad
-	 */
-	$(function() {
-
-	});
 
 })( jQuery );

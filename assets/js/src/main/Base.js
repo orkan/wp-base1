@@ -66,19 +66,6 @@ ork.Base = {
 	},
 
 	/**
-	 * Build query string from object.
-	 */
-	buildHttpQuery( obj ) {
-		const Query = new URLSearchParams();
-
-		for( const [name, value] of Object.entries( obj ) ) {
-			Query.append( name, value );
-		}
-
-		return Query.toString();
-	},
-
-	/**
 	 * [Input] Show/hide spinner
 	 */
 	showSpinner( id, show = true ) {

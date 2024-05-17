@@ -65,4 +65,25 @@ window.ork = window.ork || {};
 				}
 			});
 	});
+
+	$(() => {
+		// [cache] Clear input fields cache
+		$( ork.Base.getId( 'cache_btn' ) )
+			.on( 'click', async (Event) => {
+				const Div = document.getElementById( 'cache_result' );
+				try {
+					Event.currentTarget.disabled = true;
+					Div.innerHTML = '';
+					Div.innerHTML = await ork.Ajax.fetch( ork.ajaxer.action.flushcache, {}, {
+						method: 'GET',
+						spinner: '#cache_spin',
+					});
+					Event.currentTarget.disabled = false;
+				} catch( E ) {
+					Div.innerHTML = 'Error: ' + E.message;
+				} finally {
+					Event.currentTarget.disabled = false;
+				}
+			});
+	});
 })( jQuery );

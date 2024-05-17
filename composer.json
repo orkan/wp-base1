@@ -8,11 +8,11 @@
 		{
 			"name": "Orkan",
 			"role": "Lead",
-			"email": "orkans+new@gmail.com"
+			"email": "orkans+wpbase1@gmail.com"
 		}
 	],
 	"require": {
-		"orkan/wp-base": "^1"
+		"orkan/wp-base": "^2"
 	},
 	"autoload": {
 		"psr-4": {
@@ -21,17 +21,9 @@
 	},
 	"extra": {
 		"installer-name": "ork-base1",
-		"installer-paths": {
-			"html/wp-content/plugins/{$name}": [
-				"type:wordpress-plugin"
-			],
-			"html/wp-content/themes/{$name}": [
-				"type:wordpress-theme"
-			]
-		},
 		"branch-alias": {
-			"dev-master": "1.0.x-dev",
-			"dev-develop": "1.x-dev"
+			"dev-master": "2.0.x-dev",
+			"dev-develop": "2.x-dev"
 		}
 	}
 }

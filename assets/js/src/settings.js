@@ -2,15 +2,7 @@ window.ork = window.ork || {};
 
 (function ($) {
 
-	/* {FILE: main/base.js} */
+	/* {FILE: main/Base.js} */
 	/* {FILE: main/Ajax.js} */
-
-	/*
-	 * ---------------------------------------------------------------------------------------------------------
-	 * onLoad
-	 */
-	$(function() {
-
-	});
 
 })( jQuery );
