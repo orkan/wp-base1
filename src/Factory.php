@@ -12,6 +12,9 @@ namespace Orkan\WP\Base1;
  */
 class Factory extends \Orkan\WP\Base\Factory
 {
+	const NAME = 'BaseEx 1';
+	const SLUG = 'orkbasex1';
+
 	/**
 	 * Services:
 	 */

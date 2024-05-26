@@ -1,0 +1,6 @@
+{
+  "prettier": "@orkans/prettier-config",
+  "devDependencies": {
+    "@orkans/prettier-config": "^2.0.0"
+  }
+}

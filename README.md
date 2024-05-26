@@ -1,4 +1,4 @@
-# Wordpress plugin: Ork Base1 example `v2.0.0`
+# Wordpress plugin: Ork Base1 example `v3.0.0`
 Basic example demonstrating usage of [orkan/wp-base](https://github.com/orkan/wp-base) package.
 
 ### Installation:
@@ -27,4 +27,4 @@ Links to these Tools will be automatically displayed in the: Dashboard > Plugins
 [Orkan](https://github.com/orkan)
 
 ## Updated
-Fri, 17 May 2024 16:31:19 +02:00
+Sun, 26 May 2024 17:14:21 +02:00

@@ -1,101 +1,20 @@
-/*
- * This file is part of the orkan/wp-base1 package.
- * Copyright (c) 2024 Orkan <orkans+wpbase1@gmail.com>
- */
-/* DO NOT EDIT - AUTO-GENERATED FROM: wp-content/plugins/ork-base1/assets/js/src/settings.js */
-window.orkbasex1 = window.orkbasex1 || {};
-
-/*
- * ==============================================================================================
- * Ork | Functions
- */
-orkbasex1.fn = {
-  /**
-   * Get element ID from name.
-   */
-  getId(name) {
-    return '#' + orkbasex1.name2id[name];
-  },
-
-  /**
-   * Get element from name.
-   */
-  getElement(name) {
-    return document.getElementById(orkbasex1.name2id[name] ?? null);
-  },
-
-  /**
-   * Logger.
-   */
-  log(msg, type = 'log') {
-    if ('debug' === type && !orkbasex1.debug) {
-      return;
-    } else {
-      type = 'log';
-    }
-
-    console[type](msg);
-  },
-
-  debug(msg) {
-    this.log(msg, 'debug');
-  },
-
-  /**
-   * Clear FORM inputs.
-   */
-  clearForm(form) {
-    form.reset();
-    Array.from(form.elements).forEach((input) => {
-      if (input.disabled) {
-        return;
-      }
-      switch (input.type.toLowerCase()) {
-        case 'text':
-        case 'password':
-        case 'textarea':
-        case 'hidden':
-          input.value = '';
-          break;
-
-        case 'radio':
-        case 'checkbox':
-          input.checked = false;
-          break;
-
-        case 'select-one':
-        case 'select-multi':
-          input.selectedIndex = -1;
-          break;
-      }
-    });
-  },
-
-  /**
-   * Must be called as: await usleep(1); from within another async function! :(
-   */
-  async usleep(usec) {
-    return await new Promise((resolve, reject) => setTimeout(() => resolve(1), usec));
-  },
-};
-
-window.orkbasex1 = window.orkbasex1 || {};
+window.$plu = window.$plu || {};
 
 /*
  * ==============================================================================================
  * Ork | Ajax
  */
-orkbasex1.Ajax = {
+$plu.Ajax = {
   /**
    * Ajax request
    */
   async fetch(opts = {}, data = {}) {
     let json,
       status,
-      url = orkbasex1.url;
+      url = $plu.url;
 
     data.action = opts.action;
-    data[orkbasex1.nonce.name] = orkbasex1.nonce.action;
+    data[$plu.nonce.name] = $plu.nonce.action;
 
     /*
      * Deaults:
@@ -130,7 +49,7 @@ orkbasex1.Ajax = {
     const Response = await fetch(url, opts)
       .then((Response) => {
         status = `[${Response.status}] ${Response.statusText}`;
-        orkbasex1.fn.debug(Response);
+        $plu.fn.debug(Response);
         return Response.text();
       })
       .catch((E) => {
@@ -182,4 +101,3 @@ orkbasex1.Ajax = {
     }
   },
 };
-

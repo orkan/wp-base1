@@ -3,257 +3,277 @@
  * Copyright (c) 2024 Orkan <orkans+wpbase1@gmail.com>
  */
 /* DO NOT EDIT - AUTO-GENERATED FROM: wp-content/plugins/ork-base1/assets/js/src/tool-ajaxer.js */
-window.ork = window.ork || {};
+window.orkbasex1 = window.orkbasex1 || {};
+
+/*
+ * ==============================================================================================
+ * Ork | Functions
+ */
+orkbasex1.fn = {
+  /**
+   * Get element ID from name.
+   */
+  getId(name) {
+    return '#' + orkbasex1.name2id[name];
+  },
+
+  /**
+   * Get element from name.
+   */
+  getElement(name) {
+    return document.getElementById(orkbasex1.name2id[name] ?? null);
+  },
+
+  /**
+   * Logger.
+   */
+  log(msg, type = 'log') {
+    if ('debug' === type && !orkbasex1.debug) {
+      return;
+    } else {
+      type = 'log';
+    }
+
+    console[type](msg);
+  },
+
+  debug(msg) {
+    this.log(msg, 'debug');
+  },
+
+  /**
+   * Clear FORM inputs.
+   */
+  clearForm(form) {
+    form.reset();
+    Array.from(form.elements).forEach((input) => {
+      if (input.disabled) {
+        return;
+      }
+      switch (input.type.toLowerCase()) {
+        case 'text':
+        case 'password':
+        case 'textarea':
+        case 'hidden':
+          input.value = '';
+          break;
+
+        case 'radio':
+        case 'checkbox':
+          input.checked = false;
+          break;
+
+        case 'select-one':
+        case 'select-multi':
+          input.selectedIndex = -1;
+          break;
+      }
+    });
+  },
+
+  /**
+   * Must be called as: await usleep(1); from within another async function! :(
+   */
+  async usleep(usec) {
+    return await new Promise((resolve, reject) => setTimeout(() => resolve(1), usec));
+  },
+};
+
+window.orkbasex1 = window.orkbasex1 || {};
+
+/*
+ * ==============================================================================================
+ * Ork | Ajax
+ */
+orkbasex1.Ajax = {
+  /**
+   * Ajax request
+   */
+  async fetch(opts = {}, data = {}) {
+    let json,
+      status,
+      url = orkbasex1.url;
+
+    data.action = opts.action;
+    data[orkbasex1.nonce.name] = orkbasex1.nonce.action;
+
+    /*
+     * Deaults:
+     *
+     * [signal]
+     * See AbortController::signal
+     *
+     * [Spinner]
+     * DOM element to toggle class from opts[spinCls]
+     */
+    opts = {
+      ...{
+        method: 'POST',
+        signal: null,
+        Spinner: null,
+        spinCls: null,
+      },
+      ...opts,
+    };
+
+    switch (opts.method) {
+      case 'GET':
+        url += '?' + this.getHttpQuery(data);
+        break;
+      case 'POST':
+        opts.body = this.getFormData(data);
+        break;
+    }
+
+    this.showSpinner(true, opts.Spinner, opts.spinCls);
+
+    const Response = await fetch(url, opts)
+      .then((Response) => {
+        status = `[${Response.status}] ${Response.statusText}`;
+        orkbasex1.fn.debug(Response);
+        return Response.text();
+      })
+      .catch((E) => {
+        throw new Error(E); // Connection errors
+      });
+
+    this.showSpinner(false, opts.Spinner, opts.spinCls);
+
+    try {
+      json = JSON.parse(Response);
+    } catch (E) {
+      throw new Error(E); // Data errors
+    }
+
+    if (!json || !json.success) {
+      throw new Error(json.data || status); // WP errors
+    }
+
+    return json.data;
+  },
+
+  /**
+   * Build query string from object.
+   */
+  getHttpQuery(obj) {
+    const Query = new URLSearchParams(obj);
+    return Query.toString();
+  },
+
+  /**
+   * Convert Object to FormData instance.
+   */
+  getFormData(obj) {
+    const Data = new FormData();
+    for (const [name, value] of Object.entries(obj)) {
+      Data.append(name, value);
+    }
+    return Data;
+  },
+
+  /**
+   * Show/hide spinner
+   */
+  showSpinner(show, Spinner, className = null) {
+    if (Spinner) {
+      className = className ?? 'is-active';
+      const ClassList = Spinner.classList;
+      show ? ClassList.add(className) : ClassList.remove(className);
+    }
+  },
+};
+
 
 (function ($) {
+  /*
+   * ---------------------------------------------------------------------------------------------------------
+   * onLoad
+   */
+  $(() => {
+    let Controller;
+    // [selector] Handle onChange event on <select>
+    $(orkbasex1.fn.getId('selector_select'))
+      .on('change', async (Event) => {
+        const name = Event.currentTarget.value;
+        const Result = orkbasex1.fn.getElement('selector_result');
+        Result.value = '---';
 
-	/*
-	 * ---------------------------------------------------------------------------------------------------------
-	 * Ork | Base
-	 */
-	ork.Base = {
-		/**
-		 * Get element ID from name.
-		 */
-		getId( name ) {
-			return '#' + ork.name2id[name];
-		},
-	
-		/**
-		 * Get element from name.
-		 */
-		getElement( name ) {
-			return document.getElementById( ork.name2id[name] );
-		},
-	
-		/**
-		 * Logger.
-		 */
-		log( msg, type = 'log' ) {
-			if( 'debug' === type && !ork.debug ) {
-				return;
-			}
-			else {
-				type = 'log';
-			}
-	
-			console[type]( msg );
-		},
-	
-		debug( msg ) {
-			this.log( msg, 'debug' );
-		},
-	
-		/**
-		 * Clear FORM inputs.
-		 */
-		clearForm( form ) {
-			form.reset();
-			Array.from( form.elements ).forEach( input => {
-				if( input.disabled ) {
-					return;
-				}
-				switch( input.type.toLowerCase() ) {
-					case 'text':
-					case 'password':
-					case 'textarea':
-					case 'hidden':
-						input.value = '';
-						break;
-	
-					case 'radio':
-					case 'checkbox':
-						input.checked = false;
-						break;
-	
-					case 'select-one':
-					case 'select-multi':
-						input.selectedIndex = -1;
-						break;
-				}
-			});
-		},
-	
-		/**
-		 * [Input] Show/hide spinner
-		 */
-		showSpinner( id, show = true ) {
-			$( id + '_spin' ).toggleClass( 'is-active', show );
-		},
-	
-		/**
-		 * Must be called as: await usleep(1); from within another async function! :(
-		 */
-		async usleep( usec ) {
-			return await new Promise( (resolve, reject) => setTimeout( () => resolve(1), usec ) );
-		},
-	};
+        if (name) {
+          try {
+            // Abort previous Request if in progress (race condition)
+            Controller && Controller.abort();
+            Controller = new AbortController();
 
-	/*
-	 * ---------------------------------------------------------------------------------------------------------
-	 * Ork | Ajax
-	 */
-	ork.Ajax = {
-		/**
-		 * Ajax request
-		 */
-		async fetch( action, data = {}, opts = {} ) {
-			let json, status, url = ork.url;
-	
-			data.action = action;
-			data[ork.nonce.name] = ork.nonce.action;
-	
-			// Deaults...
-			opts = { ...{
-				method: 'POST',
-				signal:  null,
-				spinner: '',
-			}, ...opts };
-	
-			if( opts.method == 'POST' ) {
-				opts.body = this.getFormData( data );
-			}
-			else if( opts.method == 'GET' ) {
-				url += '?' + this.getHttpQuery( data );
-			}
-	
-			this.spinner( opts.spinner, true );
-	
-			const Response = await fetch( url, opts )
-				.then( Response => {
-					status = `[${Response.status}] ${Response.statusText}`;
-					ork.Base.debug( Response );
-					return Response.text();
-				})
-				.catch( E => {
-					throw new Error( E ); // Connection errors
-				});
-	
-			this.spinner( opts.spinner, false );
-	
-			try {
-				json = JSON.parse( Response );
-			} catch( E ) {
-				throw new Error( E ); // Data errors
-			}
-	
-			if( !json || !json.success ) {
-				throw new Error( json.data || status ); // WP errors
-			}
-	
-			return json.data;
-		},
-	
-		/**
-		 * Build query string from object.
-		 */
-		getHttpQuery( obj ) {
-			const Query = new URLSearchParams( obj );
-			return Query.toString();
-		},
-	
-		/**
-		 * Convert Object to FormData instance.
-		 */
-		getFormData( obj ) {
-			const Data = new FormData();
-			for( const [name, value] of Object.entries( obj ) ) {
-				Data.append( name, value );
-			}
-			return Data;
-		},
-	
-		/**
-		 * [Input] Show/hide spinner
-		 */
-		spinner( id, show = true, className = 'is-active' ) {
-			if( id ) {
-				const ClassList = document.querySelector( id ).classList;
-				show ? ClassList.add( className ) : ClassList.remove( className );
-			}
-		},
-	};
+            // Ajax request
+            Result.value = orkbasex1.l10n.wait;
+            Result.value = await orkbasex1.Ajax.fetch(
+              {
+                action: orkbasex1.actions.ajaxer.selector,
+                signal: Controller.signal,
+                Spinner: document.getElementById('selector_spin'),
+              },
+              { name }
+            );
 
+            Controller = null;
+          } catch (E) {
+            Result.value = 'Error: ' + E.message;
+            throw E;
+          }
+        }
+      })
+      .change();
+  });
 
-	/*
-	 * ---------------------------------------------------------------------------------------------------------
-	 * onLoad
-	 */
-	$(() => {
-		let Controller;
-		// [selector] Handle onChange event on <select>
-		$( ork.Base.getId( 'selector_select' ) )
-			.on( 'change', async (Event) => {
-				const name = Event.currentTarget.value;
-				const Result = ork.Base.getElement( 'selector_result' );
-				Result.value = '---';
+  $(() => {
+    let Controller;
+    // [texter] Handle onInput event on <text>
+    $(orkbasex1.fn.getId('texter_text')).on('input', async (Event) => {
+      const text = Event.currentTarget.value;
+      const error = orkbasex1.fn.getElement('texter_error').checked;
+      const Result = orkbasex1.fn.getElement('texter_result');
+      try {
+        // Abort previous Request if in progress (race condition)
+        Controller && Controller.abort();
+        Controller = new AbortController();
 
-				if( name ) {
-					try {
-						// Abort previous Request if in progress (race condition)
-						Controller && Controller.abort();
-						Controller = new AbortController();
+        // Ajax request
+        Result.value = await orkbasex1.Ajax.fetch(
+          {
+            action: orkbasex1.actions.ajaxer.echotext,
+            signal: Controller.signal,
+            Spinner: document.getElementById('texter_spin'),
+          },
+          { text, error }
+        );
 
-						// Ajax request
-						Result.value = ork.l10n.wait;
-						Result.value = await ork.Ajax.fetch( ork.ajaxer.action.selector, { name }, {
-							signal: Controller.signal,
-							spinner: '#selector_spin',
-						});
+        Controller = null;
+      } catch (E) {
+        Result.value = 'Error: ' + E.message;
+        throw E;
+      }
+    });
+  });
 
-						Controller = null;
-					} catch( E ) {
-						Result.value = 'Error: ' + E.message;
-					}
-				}
-			})
-			.change();
-	});
-
-	$(() => {
-		let Controller;
-		// [texter] Handle onInput event on <text>
-		$( ork.Base.getId( 'texter_text' ) )
-			.on( 'input', async (Event) => {
-				const text = Event.currentTarget.value;
-				const error = ork.Base.getElement( 'texter_error' ).checked;
-				const Result = ork.Base.getElement( 'texter_result' );
-				try {
-					// Abort previous Request if in progress (race condition)
-					Controller && Controller.abort();
-					Controller = new AbortController();
-
-					// Ajax request
-					Result.value = await ork.Ajax.fetch( ork.ajaxer.action.echotext, { text, error }, {
-						signal: Controller.signal,
-						spinner: '#texter_spin',
-					});
-
-					Controller = null;
-				} catch( E ) {
-					Result.value = 'Error: ' + E.message;
-				}
-			});
-	});
-
-	$(() => {
-		// [cache] Clear input fields cache
-		$( ork.Base.getId( 'cache_btn' ) )
-			.on( 'click', async (Event) => {
-				const Div = document.getElementById( 'cache_result' );
-				try {
-					Event.currentTarget.disabled = true;
-					Div.innerHTML = '';
-					Div.innerHTML = await ork.Ajax.fetch( ork.ajaxer.action.flushcache, {}, {
-						method: 'GET',
-						spinner: '#cache_spin',
-					});
-					Event.currentTarget.disabled = false;
-				} catch( E ) {
-					Div.innerHTML = 'Error: ' + E.message;
-				} finally {
-					Event.currentTarget.disabled = false;
-				}
-			});
-	});
-})( jQuery );
+  $(() => {
+    // [cache] Clear input fields cache
+    $(orkbasex1.fn.getId('cache_btn')).on('click', async (Event) => {
+      const Div = document.getElementById('cache_result');
+      try {
+        Event.currentTarget.disabled = true;
+        Div.innerHTML = '';
+        Div.innerHTML = await orkbasex1.Ajax.fetch({
+          action: orkbasex1.actions.ajaxer.flushcache,
+          method: 'GET',
+          Spinner: document.getElementById('cache_spin'),
+        });
+        Event.currentTarget.disabled = false;
+      } catch (E) {
+        Div.innerHTML = 'Error: ' + E.message;
+        throw E;
+      } finally {
+        Event.currentTarget.disabled = false;
+      }
+    });
+  });
+})(jQuery);

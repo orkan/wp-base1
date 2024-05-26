@@ -130,8 +130,8 @@ class Ajaxer extends \Orkan\WP\Base\Tools
 		// Javascript: window.ork = {...}
 		/* @formatter:off */
 		$jsData = [
-			'ajaxer' => [
-				'action' => $this->ajaxActions,
+			'actions' => [
+				'ajaxer' => $this->ajaxActions,
 			],
 			'l10n' => [
 				'wait' => 'Wait for response...',
@@ -144,7 +144,7 @@ class Ajaxer extends \Orkan\WP\Base\Tools
 		}
 
 		$this->Plugin->enqueue( 'css/tool-ajaxer.css', [ 'forms' ] );
-		$this->Plugin->enqueue( 'js/tool-ajaxer.js', [], $this->Settings->jsObject( $jsData ) );
+		$this->Plugin->enqueue( 'js/tool-ajaxer.js', [ 'data' => $this->Settings->jsObject( $jsData ) ] );
 
 		//wp_enqueue_style( 'ork-bootstrap', '/' . $this->Factory->get( 'assets_loc' ) . '/bootstrap/bootstrap.min.css' );
 	}
